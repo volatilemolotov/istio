@@ -1,6 +1,6 @@
-{{- if not  .Values.daemonSet -}}
+{{- if .Values.daemonSet -}}
 apiVersion: extensions/v1beta1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: istio-galley
   namespace: {{ .Release.Namespace }}
@@ -11,7 +11,6 @@ metadata:
     release: {{ .Release.Name }}
     istio: galley
 spec:
-  replicas: {{ .Values.replicaCount }}
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -32,15 +31,6 @@ spec:
 {{- if .Values.global.priorityClassName }}
       priorityClassName: "{{ .Values.global.priorityClassName }}"
 {{- end }}
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - {{ template "galley.name" . }}
       containers:
         - name: galley
           image: "{{ .Values.global.hub }}/{{ .Values.image }}:{{ .Values.global.tag }}"
@@ -117,4 +107,5 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+
 {{- end }}

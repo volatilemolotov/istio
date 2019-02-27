@@ -3,6 +3,8 @@
 #
 enabled: true
 replicaCount: 1
+daemonSet: false
 image: galley
 nodeSelector: {}
 
+tolerations: []
