@@ -32,15 +32,6 @@ spec:
 {{- if .Values.global.priorityClassName }}
       priorityClassName: "{{ .Values.global.priorityClassName }}"
 {{- end }}
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - {{ template "galley.name" . }}
       containers:
         - name: galley
           image: "{{ .Values.global.hub }}/{{ .Values.image }}:{{ .Values.global.tag }}"
@@ -112,6 +103,15 @@ spec:
         configMap:
           name: istio
       affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ template "galley.name" . }}
+            topologyKey: kubernetes.io/hostname
       {{- include "nodeaffinity" . | indent 6 }}
     {{- with .Values.tolerations }}
       tolerations:
